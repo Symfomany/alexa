@@ -1,0 +1,72 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "quizzfilms",
+      "intents": [
+        {
+          "name": "AMAZON.CancelIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.HelpIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.StopIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.NavigateHomeIntent",
+          "samples": []
+        },
+        {
+          "name": "LaunchIntent",
+          "samples": ["menu principal"]
+        },
+        {
+          "name": "NbIntent",
+          "slots": [
+            {
+              "name": "nbjoueurs",
+              "type": "AMAZON.SearchQuery"
+            }
+          ],
+          "samples": [
+            "{nbjoueurs} gamers",
+            "{nbjoueurs} players",
+            "{nbjoueurs} personnes",
+            "{nbjoueurs} joueurs",
+            "{nbjoueurs} joueur"
+          ]
+        },
+        {
+          "name": "AMAZON.PauseIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.ResumeIntent",
+          "samples": []
+        },
+        {
+          "name": "ReponseJoueurIntent",
+          "slots": [
+            {
+              "name": "reponseJoueur",
+              "type": "AMAZON.SearchQuery"
+            }
+          ],
+          "samples": [
+            "Le film c'est {reponseJoueur}",
+            "Le nom du film est {reponseJoueur}",
+            "Le titre du film est {reponseJoueur}",
+            "C'est le film {reponseJoueur}",
+            "le titre est {reponseJoueur}",
+            "J'ai trouvé c'est {reponseJoueur}",
+            "C'est {reponseJoueur}",
+            "Le film est {reponseJoueur}"
+          ]
+        }
+      ]
+    }
+  }
+}
