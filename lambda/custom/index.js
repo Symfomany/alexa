@@ -188,7 +188,7 @@ const ReponseJoueurHandler = {
     const extrait =
       movies[sessionAttributes.ids[sessionAttributes.playing]].title;
 
-    if (sessionAttributes.playingJoueur >= sessionAttributes.nbjoueurs) {
+    if (sessionAttributes.playingJoueur >= sessionAttributes.nbjoueurs - 1) {
       sessionAttributes.playingJoueur = 0;
       sessionAttributes.laps = sessionAttributes.laps + 1;
     }
