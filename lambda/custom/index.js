@@ -178,6 +178,7 @@ const ReponseJoueurHandler = {
     );
   },
   handle(handlerInput) {
+    // get the respon se of the user
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     const reponseJoueur = slots["reponseJoueur"].value;
 
@@ -185,13 +186,9 @@ const ReponseJoueurHandler = {
     let sessionAttributes = attributesManager.getSessionAttributes();
     const movies = datas.movies;
 
+    // get the current extract (playing is the current cursor of playing game)
     const extrait =
       movies[sessionAttributes.ids[sessionAttributes.playing]].title;
-
-    if (sessionAttributes.playingJoueur >= sessionAttributes.nbjoueurs - 1) {
-      sessionAttributes.playingJoueur = 0;
-      sessionAttributes.laps = sessionAttributes.laps + 1;
-    }
 
     verifyString = (voice, response) => {
       const metaphone = natural.Metaphone;
@@ -207,48 +204,57 @@ const ReponseJoueurHandler = {
 
     let speechText = "";
 
+    // If the response is ok
     if (verifyString(reponseJoueur, extrait)) {
+      // Increase his score by levels
       sessionAttributes.joueurs[sessionAttributes.playingJoueur] =
         parseInt(sessionAttributes.joueurs[sessionAttributes.playingJoueur]) +
         sessionAttributes.levels[sessionAttributes.laps - 1];
 
-      speechText = `<speak>Répondu: ${reponseJoueur}. 
-    Bravo, c'est exact ! Vous rapportez ${
-      sessionAttributes.levels[sessionAttributes.laps - 1]
-    } points, ce qui vous fait un total de ${
+      speechText = `<speak>
+      Bravo, c'est exact !!! .  Vous rapportez ${
+        sessionAttributes.levels[sessionAttributes.laps - 1]
+      } points, ce qui vous fait un total de ${
         sessionAttributes.joueurs[sessionAttributes.playingJoueur]
       } points.<break time='200ms'/> `;
     } else {
-      speechText = `<speak>Répondu: ${reponseJoueur}. 
+      speechText = `<speak>
       Non, ce n'est pas ça du tout! <break time='200ms'/> Le film était ${extrait}. <break time='200ms'/>
       Tu restes à ${
         sessionAttributes.joueurs[sessionAttributes.playingJoueur]
       } points.<break time='200ms'/> `;
     }
 
+    // if laps is not over total of laps (it's not finish...)
     if (sessionAttributes.laps <= sessionAttributes.lapsTotal) {
-      //not sure
-      sessionAttributes.playing = parseInt(sessionAttributes.playing) + 1;
-      sessionAttributes.playingJoueur =
-        parseInt(sessionAttributes.playingJoueur) + 1;
+      // reset the current players, remake a lap
+      if (sessionAttributes.playingJoueur == sessionAttributes.nbjoueurs - 1) {
+        sessionAttributes.playingJoueur = 0; // reset in ZERO (eg: 0-1-2)
+        sessionAttributes.laps = sessionAttributes.laps + 1; //inscrease the laps
+      } else {
+        // next player to game
+        sessionAttributes.playingJoueur =
+          parseInt(sessionAttributes.playingJoueur) + 1;
+      }
 
+      // increase the cursor for playing the next extract
+      sessionAttributes.playing = parseInt(sessionAttributes.playing) + 1;
+
+      // next extract for next player
       const extraitTwo =
         movies[sessionAttributes.ids[sessionAttributes.playing]].sample;
 
       speechText += `Joueur ${sessionAttributes.playingJoueur +
         1} c'est à vous <break time='200ms'/> 
       <audio src="${extraitTwo}"></audio> </speak>`;
-    } else {
-      speechText += `C'est terminé!<break time='200ms'/>   Voici les scores:</speak>`;
-    }
 
-    // response
-    if (sessionAttributes.laps <= sessionAttributes.lapsTotal) {
       return handlerInput.responseBuilder
         .speak(speechText)
         .reprompt(speechText)
         .getResponse();
     } else {
+      // if it's over the laps
+      speechText += `C'est terminé!<break time='200ms'/>   Voici les scores. </speak>`;
       return handlerInput.responseBuilder.speak(speechText).getResponse();
     }
   }
@@ -262,7 +268,20 @@ const HelpIntentHandler = {
     );
   },
   handle(handlerInput) {
-    const speechText = "You can say hello to me!";
+    const attributesManager = handlerInput.attributesManager;
+    let sessionAttributes = attributesManager.getSessionAttributes();
+    const movies = datas.movies;
+
+    const extrait =
+      movies[sessionAttributes.ids[sessionAttributes.playing]].title;
+
+    const speechText = `Ma première lettre est un ${
+      extrait[0]
+    },  <break time='200ms'/> 
+    Ma dernière lettre est un ${
+      extrait[extrait.length - 1]
+    }  <break time='200ms'/> , 
+    le tout fait ${extrait.length} lettres.`;
 
     return handlerInput.responseBuilder
       .speak(speechText)

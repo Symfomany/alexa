@@ -194,7 +194,7 @@
     },
     {
       "id": 33,
-      "title": "5ème Element",
+      "title": "Cinquième Element",
       "level": 2,
       "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/5emeElement_1.mp3"
     },
@@ -224,7 +224,7 @@
     },
     {
       "id": 38,
-      "title": "OSS117",
+      "title": "O.S.S. 117",
       "level": 2,
       "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/OSS117_1.mp3"
     },
@@ -446,9 +446,15 @@
     },
     {
       "id": 75,
-      "title": "E.T",
+      "title": "iti",
       "level": 2,
       "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/et_1.mp3"
+    },
+    {
+      "id": 76,
+      "title": "Cinquième élément",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/5emeElement_2.mp3"
     },
     {
       "id": 77,
@@ -488,7 +494,7 @@
     },
     {
       "id": 83,
-      "title": "Pocahontas",
+      "title": "Pokahontas",
       "level": 2,
       "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/Pocahontas_1.mp3"
     },
@@ -503,6 +509,288 @@
       "title": "Moi Moche et Mechant",
       "level": 2,
       "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/MoiMocheEtMechant_1.mp3"
+    },
+    {
+      "id": 86,
+      "title": "Age de Glace",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/AgedeGlace_2.mp3"
+    },
+    {
+      "id": 87,
+      "title": "Forest Gump",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/ForestGump_2.mp3"
+    },
+    {
+      "id": 88,
+      "title": "Harry Potter",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/HarryPotter_2.mp3"
+    },
+    {
+      "id": 89,
+      "title": "Le Roi Lion",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/LeRoiLion_2.mp3"
+    },
+    {
+      "id": 90,
+      "title": "Nemo",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/Nemo_2.mp3"
+    },
+    {
+      "id": 91,
+      "title": "O.S.S. 117",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/OSS117_2.mp3"
+    },
+    {
+      "id": 92,
+      "title": "O.S.S. 117",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/OSS117_3.mp3"
+    },
+    {
+      "id": 93,
+      "title": "O.S.S. 117",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/OSS117_4.mp3"
+    },
+    {
+      "id": 93,
+      "title": "Pokahontas",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/Pocahontas_2.mp3"
+    },
+    {
+      "id": 94,
+      "title": "Pokahontas",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/Pocahontas_3.mp3"
+    },
+    {
+      "id": 95,
+      "title": "Toy Story",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/ToyStory_2.mp3"
+    },
+    {
+      "id": 96,
+      "title": "Toy Story",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/ToyStory_2.mp3"
+    },
+    {
+      "id": 97,
+      "title": "Aladin",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/aladdin_2.mp3"
+    },
+    {
+      "id": 98,
+      "title": "Astérix et Obélix",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/ast%C3%A9rixetob%C3%A9lixmission+cl%C3%A9op%C3%A2tre_2.mp3"
+    },
+    {
+      "id": 99,
+      "title": "Astérix et Obélix",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/ast%C3%A9rixetob%C3%A9lixmission+cl%C3%A9op%C3%A2tre_3.mp3"
+    },
+    {
+      "id": 100,
+      "title": "Dikkenek",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/dikkenek_2.mp3"
+    },
+    {
+      "id": 101,
+      "title": "Dikkenek",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/dikkenek_3.mp3"
+    },
+    {
+      "id": 102,
+      "title": "Il était une fois dans l'ouest",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/iletaitunefois_2.mp3"
+    },
+    {
+      "id": 103,
+      "title": "Il était une fois dans l'ouest",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/iletaitunefois_3.mp3"
+    },
+    {
+      "id": 104,
+      "title": "Le Seigneur des Anneaux",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/leSeigneursDesAnneaux_2.mp3"
+    },
+    {
+      "id": 105,
+      "title": "Le Bon La Brute et le Truand",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/lebonlabruteetletruand_2.mp3"
+    },
+    {
+      "id": 106,
+      "title": "Le Bon La Brute et le Truand",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/lebonlabruteetletruand_3.mp3"
+    },
+    {
+      "id": 107,
+      "title": "Le Diner de Cons",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/ledinerdecons_2.mp3"
+    },
+    {
+      "id": 108,
+      "title": "Le Diner de Cons",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/ledinerdecons_3.mp3"
+    },
+    {
+      "id": 109,
+      "title": "Le Pari",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/lepari_2.mp3"
+    },
+    {
+      "id": 110,
+      "title": "Le Parrain",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/leparrain_2.mp3"
+    },
+    {
+      "id": 111,
+      "title": "Le Parrain",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/leparrain_3.mp3"
+    },
+    {
+      "id": 112,
+      "title": "Les Bronzés",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/lesbronzes_2.mp3"
+    },
+    {
+      "id": 113,
+      "title": "Les Bronzés font du skis",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/lesbronzesfontduski_2.mp3"
+    },
+    {
+      "id": 114,
+      "title": "Les Bronzés font du skis",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/lesbronzesfontduski_3.mp3"
+    },
+    {
+      "id": 115,
+      "title": "Les Bronzés font du skis",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/lesbronzesfontduski_4.mp3"
+    },
+    {
+      "id": 116,
+      "title": "Les Choristes",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/leschoristes_2.mp3"
+    },
+    {
+      "id": 117,
+      "title": "Les Choristes",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/leschoristes_3.mp3"
+    },
+    {
+      "id": 118,
+      "title": "Les Tontons Flingueurs",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/lestontonsflingeurs_2.mp3"
+    },
+    {
+      "id": 119,
+      "title": "Matrix",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/matrix_2.mp3"
+    },
+    {
+      "id": 120,
+      "title": "Retour vers le futur",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/retourverslefutur_2.mp3"
+    },
+    {
+      "id": 121,
+      "title": "Retour vers le futur",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/retourverslefutur_3.mp3"
+    },
+    {
+      "id": 122,
+      "title": "Rocky",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/rocky_2.mp3"
+    },
+    {
+      "id": 123,
+      "title": "Rocky",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/rocky_3.mp3"
+    },
+    {
+      "id": 123,
+      "title": "Scarface",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/scarface_2.mp3"
+    },
+    {
+      "id": 123,
+      "title": "Titanic",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/titanic_2.mp3"
+    },
+    {
+      "id": 123,
+      "title": "Titanic",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/titanic_3.mp3"
+    },
+    {
+      "id": 123,
+      "title": "Titanic",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/titanic_4.mp3"
+    },
+    {
+      "id": 123,
+      "title": "Un indien dans la ville",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/unindiendanslaville_2.mp3"
+    },
+    {
+      "id": 123,
+      "title": "Un indien dans la ville",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/unindiendanslaville_3.mp3"
+    },
+    {
+      "id": 124,
+      "title": "Les visiteurs",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/visiteur_2.mp3"
+    },
+    {
+      "id": 125,
+      "title": "Les visiteurs",
+      "level": 2,
+      "sample": "https://s3.eu-west-3.amazonaws.com/musicdefilms/visiteur_3.mp3"
     }
   ]
 }
