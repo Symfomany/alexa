@@ -65,7 +65,7 @@ const NbIntentHandler = {
     sessionAttributes.playing = 0;
     sessionAttributes.playingJoueur = 0;
     sessionAttributes.laps = 1;
-    sessionAttributes.lapsTotal = 5;
+    sessionAttributes.lapsTotal = 1;
     sessionAttributes.nbjoueurs = number;
     sessionAttributes.joueurs = Array(number).fill(0);
 
@@ -178,12 +178,15 @@ const ReponseJoueurHandler = {
     );
   },
   handle(handlerInput) {
+    let speechText = "<speak>";
+
+    const attributesManager = handlerInput.attributesManager;
+    let sessionAttributes = attributesManager.getSessionAttributes();
+
     // get the respon se of the user
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     const reponseJoueur = slots["reponseJoueur"].value;
 
-    const attributesManager = handlerInput.attributesManager;
-    let sessionAttributes = attributesManager.getSessionAttributes();
     const movies = datas.movies;
 
     // get the current extract (playing is the current cursor of playing game)
@@ -198,11 +201,9 @@ const ReponseJoueurHandler = {
       );
       return (
         metaphone.compare(voice.toLowerCase(), response.toLowerCase()) ||
-        similarity >= 0.6
+        similarity >= 0.7
       );
     };
-
-    let speechText = "";
 
     // If the response is ok
     if (verifyString(reponseJoueur, extrait)) {
@@ -211,32 +212,32 @@ const ReponseJoueurHandler = {
         parseInt(sessionAttributes.joueurs[sessionAttributes.playingJoueur]) +
         sessionAttributes.levels[sessionAttributes.laps - 1];
 
-      speechText = `<speak>
+      speechText += `
       Bravo, c'est exact !!! .  Vous rapportez ${
         sessionAttributes.levels[sessionAttributes.laps - 1]
       } points, ce qui vous fait un total de ${
         sessionAttributes.joueurs[sessionAttributes.playingJoueur]
       } points.<break time='200ms'/> `;
     } else {
-      speechText = `<speak>
+      speechText += `
       Non, ce n'est pas ça du tout! <break time='200ms'/> Le film était ${extrait}. <break time='200ms'/>
       Tu restes à ${
         sessionAttributes.joueurs[sessionAttributes.playingJoueur]
       } points.<break time='200ms'/> `;
     }
 
+    // reset the current players, remake a lap
+    if (sessionAttributes.playingJoueur == sessionAttributes.nbjoueurs - 1) {
+      sessionAttributes.playingJoueur = 0; // reset in ZERO (eg: 0-1-2)
+      sessionAttributes.laps = sessionAttributes.laps + 1; //inscrease the laps
+    } else {
+      // next player to game
+      sessionAttributes.playingJoueur =
+        parseInt(sessionAttributes.playingJoueur) + 1;
+    }
+
     // if laps is not over total of laps (it's not finish...)
     if (sessionAttributes.laps <= sessionAttributes.lapsTotal) {
-      // reset the current players, remake a lap
-      if (sessionAttributes.playingJoueur == sessionAttributes.nbjoueurs - 1) {
-        sessionAttributes.playingJoueur = 0; // reset in ZERO (eg: 0-1-2)
-        sessionAttributes.laps = sessionAttributes.laps + 1; //inscrease the laps
-      } else {
-        // next player to game
-        sessionAttributes.playingJoueur =
-          parseInt(sessionAttributes.playingJoueur) + 1;
-      }
-
       // increase the cursor for playing the next extract
       sessionAttributes.playing = parseInt(sessionAttributes.playing) + 1;
 
@@ -254,7 +255,39 @@ const ReponseJoueurHandler = {
         .getResponse();
     } else {
       // if it's over the laps
-      speechText += `C'est terminé!<break time='200ms'/>   Voici les scores. </speak>`;
+      speechText += ` <break time='500ms'/> C'est terminé!<break time='200ms'/>   Voici les scores. <break time='600ms'/>`;
+
+      sessionAttributes.joueurs.forEach((element, index) => {
+        speechText += `Joueur ${index +
+          1} : ${element} points. <break time='400ms'/>`;
+      });
+
+      speechText += `<break time='500ms'/>`;
+      sessionAttributes.joueurs = sessionAttributes.joueurs
+        .map((elt, index) => {
+          return { score: elt, position: index + 1 };
+        })
+        .sort((a, b) => b.score - a.score);
+
+      // hight score
+      sessionAttributes.hightScore = sessionAttributes.joueurs[0].score;
+
+      sessionAttributes.winners = sessionAttributes.joueurs.filter(
+        el => el.score === sessionAttributes.hightScore
+      );
+
+      if (sessionAttributes.winners.length > 1) {
+        speechText += `Les gagnants ex aequo à cette partie sont les joueurs : ${sessionAttributes.winners
+          .map(elt => elt.position)
+          .join(" ")}.`;
+      } else {
+        speechText += `Le grand gagnant de cette partie avec ${
+          sessionAttributes.hightScore
+        } points est le joueur : ${sessionAttributes.winners[0].position}.`;
+      }
+
+      speechText += "</speak>";
+
       return handlerInput.responseBuilder.speak(speechText).getResponse();
     }
   }
