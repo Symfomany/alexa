@@ -27,8 +27,8 @@ verifyString = (voice, response) => {
     response.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, "")
   );
   return (
-    metaphone.compare(voice.toLowerCase(), response.toLowerCase()) ||
-    similarity >= 0.7
+    voice.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, "") ===
+    response.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, "")
   );
 };
 
@@ -61,7 +61,7 @@ const initGame = (attributesManager, number = 3) => {
   sessionAttributes.playing = 0;
   sessionAttributes.playingJoueur = 0;
   sessionAttributes.laps = 1;
-  sessionAttributes.lapsTotal = 3;
+  sessionAttributes.lapsTotal = 5;
   sessionAttributes.nbjoueurs = number;
   sessionAttributes.joueurs = Array(number).fill(0);
   sessionAttributes.ids = Ids;
@@ -103,9 +103,6 @@ const LaunchRequestHandler = {
   }
 };
 
-/**
- * Nb Intent
- */
 const NbIntentHandler = {
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.intent.name === "NbIntent";
@@ -113,6 +110,26 @@ const NbIntentHandler = {
   handle(handlerInput) {
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     const number = parseInt(slots["nbjoueurs"].value);
+
+    // numbers of joueur is incorect
+    if (number < 1 || number > 4) {
+      const speechText = `
+      <speak> 
+        Le nombre de  joueurs doit être compris entre 1 et 4.
+        Combien de joueur dans cette partie?
+      </speak>`;
+
+      const respeechText = `
+      <speak>  Je répète, le nombre de  joueurs doit être compris entre 1 et 4.
+      Combien de joueur dans cette partie?
+      </speak>`;
+
+      return handlerInput.responseBuilder
+        .speak(speechText)
+        .reprompt(respeechText)
+        .getResponse();
+    }
+
     const movies = datas.movies;
 
     let sessionAttributes = initGame(handlerInput.attributesManager, number);
@@ -162,94 +179,6 @@ const RepeatHandler = {
   }
 };
 
-const NextHandler = {
-  canHandle(handlerInput) {
-    return (
-      handlerInput.requestEnvelope.request.intent.name === "AMAZON.NextIntent"
-    );
-  },
-  handle(handlerInput) {
-    const attributesManager = handlerInput.attributesManager;
-    let sessionAttributes = attributesManager.getSessionAttributes();
-    const movies = datas.movies;
-
-    let speechText = "<speak>";
-    const extrait = getExtrait(movies, sessionAttributes);
-
-    //control current playing
-    if (sessionAttributes.playingJoueur == sessionAttributes.nbjoueurs - 1) {
-      sessionAttributes.playingJoueur = 0; // reset in ZERO (eg: 0-1-2)
-      sessionAttributes.laps = sessionAttributes.laps + 1; //inscrease the laps
-    } else {
-      // next player to game
-      sessionAttributes.playingJoueur =
-        parseInt(sessionAttributes.playingJoueur) + 1;
-    }
-
-    // if laps is not over total of laps (it's not finish...)
-    if (sessionAttributes.laps <= sessionAttributes.lapsTotal) {
-      // increase the cursor for playing the next extract
-      sessionAttributes.playing = parseInt(sessionAttributes.playing) + 1;
-
-      // next extract for next player
-      const extraitTwo = getExtrait(movies, sessionAttributes);
-
-      speechText += `Dommage. <break time='200ms'/> Cela te coûte rien d'essayer!<break time='200ms'/>
-      Le film c'était ${
-        extrait.title
-      }. Joueur ${sessionAttributes.playingJoueur + 1} c'est à vous pour ${
-        sessionAttributes.levels[sessionAttributes.laps - 1]
-      } points. <break time='200ms'/> 
-        <audio src="${extraitTwo.sample}"></audio> </speak>`;
-
-      return handlerInput.responseBuilder
-        .speak(speechText)
-        .reprompt(speechText)
-        .getResponse();
-    } else {
-      // if it's over the laps
-      speechText += ` <break time='500ms'/> C'est terminé!<break time='200ms'/>   Voici les scores. <break time='600ms'/>`;
-
-      sessionAttributes.joueurs.forEach((element, index) => {
-        speechText += `Joueur ${index +
-          1} : ${element} points. <break time='400ms'/>`;
-      });
-
-      speechText += `<break time='500ms'/>`;
-      sessionAttributes.joueurs = sessionAttributes.joueurs
-        .map((elt, index) => {
-          return { score: elt, position: index + 1 };
-        })
-        .sort((a, b) => b.score - a.score);
-
-      // hight score
-      sessionAttributes.hightScore = sessionAttributes.joueurs[0].score;
-
-      sessionAttributes.winners = sessionAttributes.joueurs.filter(
-        el => el.score === sessionAttributes.hightScore
-      );
-
-      if (sessionAttributes.winners.length > 1) {
-        speechText += `Les gagnants ex aequo à cette partie sont les joueurs  ${sessionAttributes.winners
-          .map(elt => elt.position)
-          .join("<break time='200ms'/>  ")}.`;
-      } else {
-        speechText += `Le grand gagnant de cette partie avec ${
-          sessionAttributes.hightScore
-        } points est le joueur ${sessionAttributes.winners[0].position}.`;
-      }
-
-      speechText +=
-        "<break time='500ms'/>Merci pour cette belle partie et à bientôt sur Quizz de Film.<break time='200ms'/> n'oubliez pas de mettre une petite note de notre application sur Google Assistant Store. A bientôt!</speak>";
-
-      return handlerInput.responseBuilder.speak(speechText).getResponse();
-    }
-  }
-};
-
-/**
- * Reponse of Players
- */
 const ReponseJoueurHandler = {
   canHandle(handlerInput) {
     return (
@@ -266,6 +195,15 @@ const ReponseJoueurHandler = {
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     const reponseJoueur = slots["reponseJoueur"].value;
 
+    if (reponseJoueur.trim() == "" || reponseJoueur.length <= 1) {
+      const speechTexte = "<speak> Quelle est ta réponse ?</speak>";
+
+      return handlerInput.responseBuilder
+        .speak(speechTexte)
+        .reprompt(speechTexte)
+        .getResponse();
+    }
+
     const movies = datas.movies;
 
     // get the current extract (playing is the current cursor of playing game)
@@ -278,10 +216,9 @@ const ReponseJoueurHandler = {
         parseInt(sessionAttributes.joueurs[sessionAttributes.playingJoueur]) +
         sessionAttributes.levels[sessionAttributes.laps - 1];
 
-      speechText += `
-        Bravo, c'est exact !. Vous rapportez ${
-          sessionAttributes.levels[sessionAttributes.laps - 1]
-        } points, ce qui vous fait un total de ${
+      speechText += ` Bravo, c'est exact. Vous rapportez ${
+        sessionAttributes.levels[sessionAttributes.laps - 1]
+      } points, ce qui vous fait un total de ${
         sessionAttributes.joueurs[sessionAttributes.playingJoueur]
       } points.<break time='300ms'/> `;
     } else {
@@ -356,7 +293,7 @@ const ReponseJoueurHandler = {
       }
 
       speechText +=
-        "<break time='500ms'/>Merci pour cette belle partie et à bientôt sur Quizz de Film.<break time='200ms'/> n'oubliez pas de mettre une petite note de notre application sur Google Assistant Store. A bientôt!</speak>";
+        "<break time='500ms'/> Merci pour cette belle partie et à bientôt sur Quizz de Film.<break time='200ms'/> n'oubliez pas de mettre une petite note de notre application sur Google Assistant Store. A bientôt!</speak>";
 
       return handlerInput.responseBuilder.speak(speechText).getResponse();
     }
@@ -435,10 +372,10 @@ const ErrorHandler = {
 
     return handlerInput.responseBuilder
       .speak(
-        "Oups!<break time='300ms'/> j'ai rencontré un problème...<break time='300ms'/> Tu peux répéter ta dernière intention?"
+        "Je n'ai pas bien compris...<break time='300ms'/> Peux-tu répéter ta réponse ?"
       )
       .reprompt(
-        "Oups!<break time='300ms'/> j'ai rencontré un problème...<break time='300ms'/> Tu peux répéter ta dernière intention?"
+        " Je n'ai pas bien compris......<break time='300ms'/> Peux tu répéter ta réponse ?"
       )
       .getResponse();
   }
@@ -450,12 +387,11 @@ exports.handler = skillBuilder
   .addRequestHandlers(
     LaunchRequestHandler,
     HelpIntentHandler,
-    NbIntentHandler,
     ReponseJoueurHandler,
     RepeatHandler,
-    NextHandler,
     CancelAndStopIntentHandler,
-    SessionEndedRequestHandler
+    SessionEndedRequestHandler,
+    NbIntentHandler
   )
   .addErrorHandlers(ErrorHandler)
   .lambda();

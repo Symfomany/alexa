@@ -11,7 +11,6 @@
   "dependencies": {
     "ask-sdk-core": "^2.0.0",
     "ask-sdk-model": "^1.0.0",
-    "csvtojson": "^2.0.8",
-    "natural": "^0.6.1"
+    "csvtojson": "^2.0.8"
   }
 }
