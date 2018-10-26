@@ -21,14 +21,34 @@ const getExtrait = (movies, sessionAttributes) =>
  * http://igm.univ-mlv.fr/ens/Master/M2/2007-2008/TAL/cours/mstal-1-3-m2.pdf
  */
 verifyString = (voice, response) => {
-  const metaphone = natural.Metaphone;
+  // const metaphone = natural.Metaphone;
   const similarity = naturalTwo.DiceCoefficient(
-    voice.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, ""),
-    response.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, "")
+    voice
+      .toLowerCase()
+      .replace(
+        /[^a-zA-Z0-9áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ._-\s ]/g,
+        ""
+      ),
+    response
+      .toLowerCase()
+      .replace(
+        /[^a-zA-Z0-9áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ._-\s ]/g,
+        ""
+      )
   );
   return (
-    voice.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, "") ===
-    response.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, "")
+    voice
+      .toLowerCase()
+      .replace(
+        /[^a-zA-Z0-9áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ._-\s ]/g,
+        ""
+      ) ===
+      response
+        .toLowerCase()
+        .replace(
+          /[^a-zA-Z0-9áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ._-\s ]/g,
+          ""
+        ) || similarity >= 0.8
   );
 };
 
@@ -84,14 +104,29 @@ const LaunchRequestHandler = {
     return handlerInput.requestEnvelope.request.type === "LaunchRequest";
   },
   handle(handlerInput) {
+    let attributesManager = handlerInput.attributesManager;
+    let sessionAttributes = attributesManager.getSessionAttributes();
+
+    if (sessionAttributes.laps) {
+      const respeechText = `
+      <speak>
+         Je n'ai pas bien compris... <break time='200ms'/>  Peux-tu répéter la réponse? <break time='200ms'/> 
+      </speak>`;
+
+      return handlerInput.responseBuilder
+        .speak(respeechText)
+        .reprompt(respeechText)
+        .getResponse();
+    }
+
     const speechText = `
     <speak>
-        Bienvenue sur le grand Quizz des Films! <break time='200ms'/> 
+        Bienvenue sur le grand Ciné Quizz des Films! <break time='200ms'/> 
         Devines les extraits de films, et remportes un maximum de points pour gagner la partie! <break time='400ms'/> Combien de joueurs pour cette partie?
         <break time='200ms'/> 
     </speak>`;
 
-    respeechText = `
+    const respeechText = `
     <speak>
        Je n'ai pas bien compris... <break time='200ms'/>  Combien de joueur voulez-vous à cette partie? <break time='200ms'/> 
     </speak>`;
@@ -108,6 +143,21 @@ const NbIntentHandler = {
     return handlerInput.requestEnvelope.request.intent.name === "NbIntent";
   },
   handle(handlerInput) {
+    let attributesManager = handlerInput.attributesManager;
+    let sessionAttributes = attributesManager.getSessionAttributes();
+
+    if (sessionAttributes.laps) {
+      respeechText = `
+      <speak>
+         Je n'ai pas bien compris... <break time='200ms'/>  Peux-tu répéter la réponse? <break time='200ms'/> 
+      </speak>`;
+
+      return handlerInput.responseBuilder
+        .speak(respeechText)
+        .reprompt(respeechText)
+        .getResponse();
+    }
+
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     const number = parseInt(slots["nbjoueurs"].value);
 
@@ -120,8 +170,8 @@ const NbIntentHandler = {
       </speak>`;
 
       const respeechText = `
-      <speak>  Je répète, le nombre de  joueurs doit être compris entre 1 et 4.
-      Combien de joueur dans cette partie?
+          <speak>  Je répète, le nombre de  joueurs doit être compris entre 1 et 4.
+          Combien de joueur dans cette partie?
       </speak>`;
 
       return handlerInput.responseBuilder
@@ -132,18 +182,18 @@ const NbIntentHandler = {
 
     const movies = datas.movies;
 
-    let sessionAttributes = initGame(handlerInput.attributesManager, number);
+    let sessionAttributs = initGame(handlerInput.attributesManager, number);
 
-    const extrait = getExtrait(movies, sessionAttributes);
+    const extrait = getExtrait(movies, sessionAttributs);
 
     const speechText = `
-    <speak>  <break time='500ms'/> 
+    <speak> <break time='500ms'/> 
       C'est partis ! Vous êtes prêt joueur 1 ?<break time='200ms'/> Alors on y va! <break time='300ms'/>  Premier extrait pour 10 points <break time='500ms'/>
       <audio src="${extrait.sample}"></audio>
     </speak>`;
 
     const respeechText = `
-    <speak>  Joueur 1, premier extrait pour 10 points <break time='500ms'/>
+    <speak>
       <audio src="${extrait.sample}"></audio>
     </speak>`;
 
@@ -168,9 +218,9 @@ const RepeatHandler = {
     const extrait = getExtrait(movies, sessionAttributes);
 
     const speechText = `
-    <speak>
-      <audio src="${extrait.sample}"></audio>
-    </speak>`;
+      <speak>
+        <audio src="${extrait.sample}"></audio>
+      </speak>`;
 
     return handlerInput.responseBuilder
       .speak(speechText)
@@ -191,18 +241,9 @@ const ReponseJoueurHandler = {
     const attributesManager = handlerInput.attributesManager;
     let sessionAttributes = attributesManager.getSessionAttributes();
 
-    // get the respon se of the user
+    // get the response of the user
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     const reponseJoueur = slots["reponseJoueur"].value;
-
-    if (reponseJoueur.trim() == "" || reponseJoueur.length <= 1) {
-      const speechTexte = "<speak> Quelle est ta réponse ?</speak>";
-
-      return handlerInput.responseBuilder
-        .speak(speechTexte)
-        .reprompt(speechTexte)
-        .getResponse();
-    }
 
     const movies = datas.movies;
 
@@ -255,9 +296,13 @@ const ReponseJoueurHandler = {
       } points. <break time='200ms'/> 
       <audio src="${extraitTwo.sample}"></audio> </speak>`;
 
+      const respeechText = `<speak><audio src="${
+        extraitTwo.sample
+      }"></audio> </speak>`;
+
       return handlerInput.responseBuilder
         .speak(speechText)
-        .reprompt(speechText)
+        .reprompt(respeechText)
         .getResponse();
     } else {
       // if it's over the laps
@@ -293,7 +338,7 @@ const ReponseJoueurHandler = {
       }
 
       speechText +=
-        "<break time='500ms'/> Merci pour cette belle partie et à bientôt sur Quizz de Film.<break time='200ms'/> n'oubliez pas de mettre une petite note de notre application sur Google Assistant Store. A bientôt!</speak>";
+        "<break time='500ms'/> Merci pour cette belle partie et à bientôt sur Quizz de Film.<break time='200ms'/> n'oubliez pas de mettre une petite note de notre application sur Amazon Skill Store. A bientôt!</speak>";
 
       return handlerInput.responseBuilder.speak(speechText).getResponse();
     }
