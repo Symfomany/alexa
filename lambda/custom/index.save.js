@@ -1,3 +1,6 @@
+/* eslint-disable  func-names */
+/* eslint-disable  no-console */
+
 const Alexa = require("ask-sdk-core");
 const datas = require("./datas.json");
 const natural = require("natural");
@@ -17,6 +20,57 @@ const getExtrait = (movies, sessionAttributes) =>
 const speakAudio = extrait => `<audio src="${extrait.sample}"></audio>`;
 
 /**
+ * Verify between Voice input and Response of Title
+ * 1 - Phoenetic
+ * 2 - Similarité (https://fr.wikipedia.org/wiki/Indice_de_S%C3%B8rensen-Dice)
+ * http://igm.univ-mlv.fr/ens/Master/M2/2007-2008/TAL/cours/mstal-1-3-m2.pdf
+ */
+const verifyString = (voice, response) => {
+  // const metaphone = natural.Metaphone;
+  const reg = /[^a-zA-Z0-9áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ._-\s ]/g;
+
+  const voice = voice.toLowerCase().replace(reg, "");
+  const response = response.toLowerCase().replace(reg, "");
+
+  const similarity = natural.DiceCoefficient(voice, response);
+  return voice === response || similarity >= 0.8;
+};
+
+// const IdsUniqByMovies = (movies, limit = 5) => {
+//   // results pushed
+//   let pusheded = [];
+
+//   // all items shuffled
+//   const shuffleArrayItems = movies.sort(() => Math.random() - 0.5);
+
+//   // all items title
+//   const shuffleArray = shuffleArrayItems.map(({ title }) => title);
+
+//   // uniq shuffled movies
+//   const uniqMovies = [...new Set(shuffleArray)];
+
+//   // last uniq shuffled movies
+//   const lastMovies = uniqMovies.slice(0, limit);
+
+//   // grouped by title for selected  right movies
+//   let groupByMoviesItems = movies.reduce(
+//     (h, a) => Object.assign(h, { [a.title]: (h[a.title] || []).concat(a) }),
+//     {}
+//   );
+
+//   // // we loop all group of movies
+//   for (let elt in groupByMoviesItems) {
+//     if (lastMovies.includes(elt)) {
+//       pusheded.push(groupByMoviesItems[elt]);
+//     }
+//   }
+
+//   return pusheded.map(
+//     (elt, key) => elt[Math.floor(Math.random() * elt.length)].id
+//   );
+// };
+
+/**
  * Init Session for Game
  * Return Session Attributes
  */
@@ -26,7 +80,10 @@ const initGame = (attributesManager, number = 3) => {
   let sessionAttributes = attributesManager.getSessionAttributes();
 
   // all index of ID
-  const Ids = IdsUniqByMovies(movies, number * 5);
+  const Ids = movies
+    .map((elt, index) => index)
+    .sort((a, b) => 0.5 - Math.random())
+    .slice(0, number * 5);
 
   /**
    * Init Session with:
@@ -52,56 +109,9 @@ const initGame = (attributesManager, number = 3) => {
   return sessionAttributes;
 };
 
-/**
- * Verify between Voice input and Response of Title
- * 1 - Phoenetic
- * 2 - Similarité (https://fr.wikipedia.org/wiki/Indice_de_S%C3%B8rensen-Dice)
- * http://igm.univ-mlv.fr/ens/Master/M2/2007-2008/TAL/cours/mstal-1-3-m2.pdf
- */
-const verifyString = (voice, response) => {
-  // const metaphone = natural.Metaphone;
-  const reg = /[^a-zA-Z0-9áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ._-\s ]/g;
-
-  const voicex = voice.toLowerCase().replace(reg, "");
-  const responsex = response.toLowerCase().replace(reg, "");
-
-  const similarity = natural.DiceCoefficient(voicex, responsex);
-  return voicex === responsex || similarity >= 0.8;
-};
-
-const IdsUniqByMovies = (movies, limit = 5) => {
-  // results pushed
-  let pusheded = [];
-
-  // all items shuffled
-  const shuffleArrayItems = movies.sort(() => Math.random() - 0.5);
-
-  // all items title
-  const shuffleArray = shuffleArrayItems.map(({ title }) => title);
-
-  // uniq shuffled movies
-  const uniqMovies = [...new Set(shuffleArray)];
-
-  // last uniq shuffled movies
-  const lastMovies = uniqMovies.slice(0, limit);
-
-  // grouped by title for selected  right movies
-  let groupByMoviesItems = movies.reduce(
-    (h, a) => Object.assign(h, { [a.title]: (h[a.title] || []).concat(a) }),
-    {}
-  );
-
-  // // we loop all group of movies
-  for (let elt in groupByMoviesItems) {
-    if (lastMovies.includes(elt)) {
-      pusheded.push(groupByMoviesItems[elt]);
-    }
-  }
-
-  return pusheded.map(
-    (elt, key) => elt[Math.floor(Math.random() * elt.length)].id
-  );
-};
+/****************************
+ ***************************************** All Handler to response Intents ***************************************************************
+ *****************************/
 
 /**
  * Documentation
@@ -141,31 +151,6 @@ const LaunchRequestHandler = {
     return handlerInput.responseBuilder
       .speak(speechText)
       .reprompt(respeechText)
-      .getResponse();
-  }
-};
-
-const RepeatHandler = {
-  canHandle(handlerInput) {
-    return (
-      handlerInput.requestEnvelope.request.intent.name === "AMAZON.RepeatIntent"
-    );
-  },
-  handle(handlerInput) {
-    const attributesManager = handlerInput.attributesManager;
-    let sessionAttributes = attributesManager.getSessionAttributes();
-    const movies = datas.movies;
-
-    const extrait = getExtrait(movies, sessionAttributes);
-
-    const speechText = `
-      <speak>
-        ${speakAudio(extrait)}
-      </speak>`;
-
-    return handlerInput.responseBuilder
-      .speak(speechText)
-      .reprompt(speechText)
       .getResponse();
   }
 };
@@ -231,6 +216,31 @@ const NbIntentHandler = {
     return handlerInput.responseBuilder
       .speak(speechText)
       .reprompt(respeechText)
+      .getResponse();
+  }
+};
+
+const RepeatHandler = {
+  canHandle(handlerInput) {
+    return (
+      handlerInput.requestEnvelope.request.intent.name === "AMAZON.RepeatIntent"
+    );
+  },
+  handle(handlerInput) {
+    const attributesManager = handlerInput.attributesManager;
+    let sessionAttributes = attributesManager.getSessionAttributes();
+    const movies = datas.movies;
+
+    const extrait = getExtrait(movies, sessionAttributes);
+
+    const speechText = `
+      <speak>
+        ${speakAudio(extrait)}
+      </speak>`;
+
+    return handlerInput.responseBuilder
+      .speak(speechText)
+      .reprompt(speechText)
       .getResponse();
   }
 };
@@ -349,38 +359,6 @@ const ReponseJoueurHandler = {
   }
 };
 
-const SessionEndedRequestHandler = {
-  canHandle(handlerInput) {
-    return handlerInput.requestEnvelope.request.type === "SessionEndedRequest";
-  },
-  handle(handlerInput) {
-    console.log(
-      `Votre Session de jeu a terminée. Veillez relancer l'application. ${
-        handlerInput.requestEnvelope.request.reason
-      }`
-    );
-
-    return handlerInput.responseBuilder.getResponse();
-  }
-};
-
-const CancelAndStopIntentHandler = {
-  canHandle(handlerInput) {
-    return (
-      handlerInput.requestEnvelope.request.type === "IntentRequest" &&
-      (handlerInput.requestEnvelope.request.intent.name ===
-        "AMAZON.CancelIntent" ||
-        handlerInput.requestEnvelope.request.intent.name ===
-          "AMAZON.StopIntent")
-    );
-  },
-  handle(handlerInput) {
-    const speechText = "Merci d'avoir jouer avec Quizz de Films et à bientôt!";
-
-    return handlerInput.responseBuilder.speak(speechText).getResponse();
-  }
-};
-
 const HelpIntentHandler = {
   canHandle(handlerInput) {
     return (
@@ -412,11 +390,45 @@ const HelpIntentHandler = {
   }
 };
 
+const CancelAndStopIntentHandler = {
+  canHandle(handlerInput) {
+    return (
+      handlerInput.requestEnvelope.request.type === "IntentRequest" &&
+      (handlerInput.requestEnvelope.request.intent.name ===
+        "AMAZON.CancelIntent" ||
+        handlerInput.requestEnvelope.request.intent.name ===
+          "AMAZON.StopIntent")
+    );
+  },
+  handle(handlerInput) {
+    const speechText = "Merci d'avoir jouer avec Quizz de Films et à bientôt!";
+
+    return handlerInput.responseBuilder.speak(speechText).getResponse();
+  }
+};
+
+const SessionEndedRequestHandler = {
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === "SessionEndedRequest";
+  },
+  handle(handlerInput) {
+    console.log(
+      `Votre Session de jeu a terminée. Veillez relancer l'application. ${
+        handlerInput.requestEnvelope.request.reason
+      }`
+    );
+
+    return handlerInput.responseBuilder.getResponse();
+  }
+};
+
 const ErrorHandler = {
   canHandle() {
     return true;
   },
   handle(handlerInput, error) {
+    console.log(`Error handled: ${error.message}`);
+
     return handlerInput.responseBuilder
       .speak(
         "Je n'ai pas bien compris...<break time='300ms'/> Peux-tu répéter ta réponse ?"
@@ -431,13 +443,14 @@ const ErrorHandler = {
 const skillBuilder = Alexa.SkillBuilders.custom();
 
 exports.handler = skillBuilder
-  .addRequestHandlers(LaunchRequestHandler)
-  .addRequestHandlers(SessionEndedRequestHandler)
-  .addRequestHandlers(CancelAndStopIntentHandler)
-  .addRequestHandlers(NbIntentHandler)
-  .addRequestHandlers(HelpIntentHandler)
-  .addRequestHandlers(RepeatHandler)
-  .addRequestHandlers(ReponseJoueurHandler)
-
+  .addRequestHandlers(
+    LaunchRequestHandler,
+    HelpIntentHandler,
+    ReponseJoueurHandler,
+    RepeatHandler,
+    CancelAndStopIntentHandler,
+    SessionEndedRequestHandler,
+    NbIntentHandler
+  )
   .addErrorHandlers(ErrorHandler)
   .lambda();

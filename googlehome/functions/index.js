@@ -15,19 +15,55 @@ const app = dialogflow();
 const getExtrait = (movies, sessionAttributes) =>
   movies[sessionAttributes.ids[sessionAttributes.playing]];
 
+/**
+ * Uniq Movies
+ * @param {*} movies
+ * @param {*} limit
+ */
+const IdsUniqByMovies = (movies, limit = 5) => {
+  // results pushed
+  let pusheded = [];
+
+  // all items shuffled
+  const shuffleArrayItems = movies.sort(() => Math.random() - 0.5);
+
+  // all items title
+  const shuffleArray = shuffleArrayItems.map(({ title }) => title);
+
+  // uniq shuffled movies
+  const uniqMovies = [...new Set(shuffleArray)];
+
+  // last uniq shuffled movies
+  const lastMovies = uniqMovies.slice(0, limit);
+
+  // grouped by title for selected  right movies
+  let groupByMoviesItems = movies.reduce(
+    (h, a) => Object.assign(h, { [a.title]: (h[a.title] || []).concat(a) }),
+    {}
+  );
+
+  // // we loop all group of movies
+  for (let elt in groupByMoviesItems) {
+    if (lastMovies.includes(elt)) {
+      pusheded.push(groupByMoviesItems[elt]);
+    }
+  }
+
+  return pusheded.map(
+    (elt, key) => elt[Math.floor(Math.random() * elt.length)].id
+  );
+};
+
 const speakAudio = extrait => `<audio src="${extrait.sample}"></audio>`;
 
 const verifyString = (voice, response) => {
   // const metaphone = natural.Metaphone;
   const reg = /[^a-zA-Z0-9áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ._-\s ]/g;
-  const similarity = naturalTwo.DiceCoefficient(
-    voice.toLowerCase().replace(reg, ""),
-    response.toLowerCase().replace(reg, "")
-  );
-  return (
-    voice.toLowerCase().replace(reg, "") ===
-      response.toLowerCase().replace(reg, "") || similarity >= 0.8
-  );
+  const voicex = voice.toLowerCase().replace(reg, "");
+  const responsex = response.toLowerCase().replace(reg, "");
+
+  const similarity = naturalTwo.DiceCoefficient(voicex, responsex);
+  return voicex === responsex || similarity >= 0.8;
 };
 
 /**
@@ -38,10 +74,7 @@ const initGame = (sessionAttributes, number = 3) => {
   const movies = datas.movies;
 
   // all index of ID
-  const Ids = movies
-    .map((elt, index) => index)
-    .sort((a, b) => 0.5 - Math.random())
-    .slice(0, number * 5);
+  const Ids = IdsUniqByMovies(movies, number * 5);
 
   /**
    * Init Session with:
@@ -69,6 +102,10 @@ app.intent("Default Welcome Intent", conv => {
   return conv.ask(
     `<speak>Bienvenue sur Le grand quiz de films les plus connus! <break time="1s"/>. Combien de joueurs pour cette partie?</speak>`
   );
+});
+
+app.intent("Default Fallback Intent", conv => {
+  return conv.ask(`<speak>J'ai  pas bien compris, tu peux répéter?</speak>`);
 });
 
 app.intent("NbJoueursIntent", (conv, { nbjoueurs }) => {
@@ -99,7 +136,7 @@ app.intent("NbJoueursIntent", (conv, { nbjoueurs }) => {
 
   const speechText = `
   <speak> <break time='500ms'/> 
-    C'est partis ! Vous êtes prêt joueur 1 ?<break time='200ms'/> Alors on y va! <break time='300ms'/>  Premier extrait pour 10 points <break time='500ms'/>
+    C'est partis pour ${number}! Vous êtes prêt joueur 1 ?<break time='200ms'/> Alors on y va! <break time='300ms'/>  Premier extrait pour 10 points <break time='500ms'/>
     ${speakAudio(extrait)}
   </speak>`;
 
@@ -120,13 +157,9 @@ app.intent("ResponsetIntent", (conv, { reponseJoueur }) => {
 
   // get the current extract (playing is the current cursor of playing game)
   const extrait = getExtrait(movies, sessionAttributes);
-  console.log(extrait);
-  console.log(reponseJoueur);
 
   // If the response is ok
   if (verifyString(reponseJoueur, extrait.title)) {
-    console.log("ok verify");
-
     //     // Increase his score by levels
     sessionAttributes.joueurs[sessionAttributes.playingJoueur] =
       parseInt(sessionAttributes.joueurs[sessionAttributes.playingJoueur]) +
@@ -138,15 +171,13 @@ app.intent("ResponsetIntent", (conv, { reponseJoueur }) => {
       sessionAttributes.joueurs[sessionAttributes.playingJoueur]
     } points.<break time='300ms'/> `;
   } else {
-    console.log("nan verify");
-
     speechText += `
         C'est faux! <break time='200ms'/> Le film était ${
           extrait.title
         }. <break time='200ms'/>
         Tu restes à ${
           sessionAttributes.joueurs[sessionAttributes.playingJoueur]
-        } points.<break time='300ms'/> `;
+        } points. <break time='300ms'/> `;
   }
 
   // reset the current players, remake a lap
@@ -173,12 +204,10 @@ app.intent("ResponsetIntent", (conv, { reponseJoueur }) => {
     } points. <break time='200ms'/>
         ${speakAudio(extraitTwo)} </speak>`;
 
-    const respeechText = `<speak>${speakAudio(extraitTwo)} </speak>`;
-
     return conv.ask(speechText);
   } else {
     // if it's over the laps
-    speechText += ` <break time='500ms'/> C'est terminé!<break time='200ms'/> Voici les scores. <break time='600ms'/>`;
+    speechText += ` <break time='500ms'/> C'est terminé! <break time='200ms'/> Voici les scores. <break time='600ms'/>`;
 
     sessionAttributes.joueurs.forEach((element, index) => {
       speechText += `Joueur ${index +
@@ -199,6 +228,7 @@ app.intent("ResponsetIntent", (conv, { reponseJoueur }) => {
       el => el.score === sessionAttributes.hightScore
     );
 
+    // get winners
     if (sessionAttributes.winners.length > 1) {
       speechText += `Les gagnants ex aequo à cette partie sont les joueurs  ${sessionAttributes.winners
         .map(elt => elt.position)
@@ -211,10 +241,10 @@ app.intent("ResponsetIntent", (conv, { reponseJoueur }) => {
     speechText +=
       "<break time='500ms'/> Merci pour cette belle partie et à bientôt sur Quizz de Film.<break time='200ms'/> n'oubliez pas de mettre une petite note de notre application sur Google Assistant  Store. A bientôt!</speak>";
   }
-  console.log(sessionAttributes);
 
   return conv.ask(speechText);
 });
+
 app.intent("RepeatIntent", (conv, { reponseJoueur }) => {
   const movies = datas.movies;
 

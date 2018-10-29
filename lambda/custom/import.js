@@ -30,8 +30,13 @@ const IdsUniqByMovies = (movies, limit = 5) => {
   }
 
   return pusheded.map(
-    (elt, key) => elt[Math.floor(Math.random() * elt.length)].id
+    (elt, key) => elt[Math.floor(Math.random() * elt.length)].title
   );
 };
 
-console.log(IdsUniqByMovies(csvFilePath.movies, 15));
+function hasDuplicates(array) {
+  return new Set(array).size !== array.length;
+}
+const ids = IdsUniqByMovies(csvFilePath.movies, 15);
+
+console.log(hasDuplicates(ids));
