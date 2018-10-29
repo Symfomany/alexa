@@ -4,6 +4,7 @@
 const Alexa = require("ask-sdk-core");
 const datas = require("./datas.json");
 const natural = require("natural");
+const naturalTwo = require("natural");
 
 /**
  * Get Extrait of Movies
@@ -14,61 +15,42 @@ const getExtrait = (movies, sessionAttributes) =>
   movies[sessionAttributes.ids[sessionAttributes.playing]];
 
 /**
- * Speak Audio
- * @param {*} extrait
- */
-const speakAudio = extrait => `<audio src="${extrait.sample}"></audio>`;
-
-/**
  * Verify between Voice input and Response of Title
  * 1 - Phoenetic
  * 2 - Similarité (https://fr.wikipedia.org/wiki/Indice_de_S%C3%B8rensen-Dice)
  * http://igm.univ-mlv.fr/ens/Master/M2/2007-2008/TAL/cours/mstal-1-3-m2.pdf
  */
-const verifyString = (voice, response) => {
+verifyString = (voice, response) => {
   // const metaphone = natural.Metaphone;
-  const reg = /[^a-zA-Z0-9áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ._-\s ]/g;
-
-  const voice = voice.toLowerCase().replace(reg, "");
-  const response = response.toLowerCase().replace(reg, "");
-
-  const similarity = natural.DiceCoefficient(voice, response);
-  return voice === response || similarity >= 0.8;
+  const similarity = naturalTwo.DiceCoefficient(
+    voice
+      .toLowerCase()
+      .replace(
+        /[^a-zA-Z0-9áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ._-\s ]/g,
+        ""
+      ),
+    response
+      .toLowerCase()
+      .replace(
+        /[^a-zA-Z0-9áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ._-\s ]/g,
+        ""
+      )
+  );
+  return (
+    voice
+      .toLowerCase()
+      .replace(
+        /[^a-zA-Z0-9áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ._-\s ]/g,
+        ""
+      ) ===
+      response
+        .toLowerCase()
+        .replace(
+          /[^a-zA-Z0-9áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ._-\s ]/g,
+          ""
+        ) || similarity >= 0.8
+  );
 };
-
-// const IdsUniqByMovies = (movies, limit = 5) => {
-//   // results pushed
-//   let pusheded = [];
-
-//   // all items shuffled
-//   const shuffleArrayItems = movies.sort(() => Math.random() - 0.5);
-
-//   // all items title
-//   const shuffleArray = shuffleArrayItems.map(({ title }) => title);
-
-//   // uniq shuffled movies
-//   const uniqMovies = [...new Set(shuffleArray)];
-
-//   // last uniq shuffled movies
-//   const lastMovies = uniqMovies.slice(0, limit);
-
-//   // grouped by title for selected  right movies
-//   let groupByMoviesItems = movies.reduce(
-//     (h, a) => Object.assign(h, { [a.title]: (h[a.title] || []).concat(a) }),
-//     {}
-//   );
-
-//   // // we loop all group of movies
-//   for (let elt in groupByMoviesItems) {
-//     if (lastMovies.includes(elt)) {
-//       pusheded.push(groupByMoviesItems[elt]);
-//     }
-//   }
-
-//   return pusheded.map(
-//     (elt, key) => elt[Math.floor(Math.random() * elt.length)].id
-//   );
-// };
 
 /**
  * Init Session for Game
@@ -79,7 +61,7 @@ const initGame = (attributesManager, number = 3) => {
 
   let sessionAttributes = attributesManager.getSessionAttributes();
 
-  // all index of ID
+  // all index of
   const Ids = movies
     .map((elt, index) => index)
     .sort((a, b) => 0.5 - Math.random())
@@ -114,7 +96,8 @@ const initGame = (attributesManager, number = 3) => {
  *****************************/
 
 /**
- * Documentation
+ * Documentation :
+ * https://github.com/alexa/alexa-skills-kit-sdk-for-nodejs/blob/2.0.x/ask-sdk-core/lib/response/ResponseBuilder.ts
  */
 const LaunchRequestHandler = {
   canHandle(handlerInput) {
@@ -160,8 +143,6 @@ const NbIntentHandler = {
     return handlerInput.requestEnvelope.request.intent.name === "NbIntent";
   },
   handle(handlerInput) {
-    const slots = handlerInput.requestEnvelope.request.intent.slots;
-    const number = parseInt(slots["nbjoueurs"].value);
     let attributesManager = handlerInput.attributesManager;
     let sessionAttributes = attributesManager.getSessionAttributes();
 
@@ -176,6 +157,9 @@ const NbIntentHandler = {
         .reprompt(respeechText)
         .getResponse();
     }
+
+    const slots = handlerInput.requestEnvelope.request.intent.slots;
+    const number = parseInt(slots["nbjoueurs"].value);
 
     // numbers of joueur is incorect
     if (number < 1 || number > 4) {
@@ -205,12 +189,12 @@ const NbIntentHandler = {
     const speechText = `
     <speak> <break time='500ms'/> 
       C'est partis ! Vous êtes prêt joueur 1 ?<break time='200ms'/> Alors on y va! <break time='300ms'/>  Premier extrait pour 10 points <break time='500ms'/>
-      ${speakAudio(extrait)}
+      <audio src="https://s3.eu-west-3.amazonaws.com/musicdefilms/foudirene_1.mp3"></audio>
     </speak>`;
 
     const respeechText = `
     <speak>
-    ${speakAudio(extrait)}
+      <audio src="https://s3.eu-west-3.amazonaws.com/musicdefilms/foudirene_1.mp3"></audio>
     </speak>`;
 
     return handlerInput.responseBuilder
@@ -235,7 +219,7 @@ const RepeatHandler = {
 
     const speechText = `
       <speak>
-        ${speakAudio(extrait)}
+        <audio src="${extrait.sample}"></audio>
       </speak>`;
 
     return handlerInput.responseBuilder
@@ -267,7 +251,7 @@ const ReponseJoueurHandler = {
     const extrait = getExtrait(movies, sessionAttributes);
 
     // If the response is ok
-    if (verifyString(reponseJoueur, extrait.title)) {
+    if (verifyString(reponseJoueur, "Fou dirène")) {
       // Increase his score by levels
       sessionAttributes.joueurs[sessionAttributes.playingJoueur] =
         parseInt(sessionAttributes.joueurs[sessionAttributes.playingJoueur]) +
@@ -310,9 +294,11 @@ const ReponseJoueurHandler = {
         1} c'est à vous pour ${
         sessionAttributes.levels[sessionAttributes.laps - 1]
       } points. <break time='200ms'/> 
-      ${speakAudio(extraitTwo)} </speak>`;
+      <audio src="${extraitTwo.sample}"></audio> </speak>`;
 
-      const respeechText = `<speak>${speakAudio(extraitTwo)} </speak>`;
+      const respeechText = `<speak><audio src="${
+        extraitTwo.sample
+      }"></audio> </speak>`;
 
       return handlerInput.responseBuilder
         .speak(speechText)
@@ -320,7 +306,7 @@ const ReponseJoueurHandler = {
         .getResponse();
     } else {
       // if it's over the laps
-      speechText += ` <break time='500ms'/> C'est terminé!<break time='200ms'/> Voici les scores. <break time='600ms'/>`;
+      speechText += ` <break time='500ms'/> C'est terminé!<break time='200ms'/>   Voici les scores. <break time='600ms'/>`;
 
       sessionAttributes.joueurs.forEach((element, index) => {
         speechText += `Joueur ${index +
@@ -352,7 +338,7 @@ const ReponseJoueurHandler = {
       }
 
       speechText +=
-        "<break time='500ms'/> Merci pour cette belle partie et à bientôt sur Quizz de Film.<break time='200ms'/> n'oubliez pas de mettre une petite note de notre application sur Amazon  Store. A bientôt!</speak>";
+        "<break time='500ms'/> Merci pour cette belle partie et à bientôt sur Quizz de Film.<break time='200ms'/> n'oubliez pas de mettre une petite note de notre application sur Amazon Skill Store. A bientôt!</speak>";
 
       return handlerInput.responseBuilder.speak(speechText).getResponse();
     }

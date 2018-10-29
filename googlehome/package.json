@@ -1,17 +1,16 @@
 {
-  "name": "hello-world",
+  "name": "googlehome",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node test.js"
+    "deploy": "firebase deploy --only functions"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "ask-sdk-core": "^2.0.0",
-    "ask-sdk-model": "^1.0.0",
+    "json2csv": "^4.2.1",
     "natural": "^0.6.2"
   }
 }

@@ -1,0 +1,504 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "ciné quiz",
+      "intents": [
+        {
+          "name": "AMAZON.CancelIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.HelpIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.StopIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.NavigateHomeIntent",
+          "samples": []
+        },
+        {
+          "name": "LaunchIntent",
+          "samples": [
+            "menu principal"
+          ]
+        },
+        {
+          "name": "NbIntent",
+          "slots": [
+            {
+              "name": "nbjoueurs",
+              "type": "AMAZON.NUMBER"
+            }
+          ],
+          "samples": [
+            "{nbjoueurs} personnes",
+            "{nbjoueurs} joueurs",
+            "{nbjoueurs} joueur"
+          ]
+        },
+        {
+          "name": "AMAZON.PauseIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.ResumeIntent",
+          "samples": []
+        },
+        {
+          "name": "ReponseJoueurIntent",
+          "slots": [
+            {
+              "name": "reponseJoueur",
+              "type": "film"
+            }
+          ],
+          "samples": [
+            "{reponseJoueur}",
+            "Le film c'est {reponseJoueur}",
+            "Le nom du film est {reponseJoueur}",
+            "Le titre du film est {reponseJoueur}",
+            "C'est le film {reponseJoueur}",
+            "le titre est {reponseJoueur}",
+            "J'ai trouvé c'est {reponseJoueur}",
+            "C'est {reponseJoueur}",
+            "Le film est {reponseJoueur}"
+          ]
+        },
+        {
+          "name": "AMAZON.RepeatIntent",
+          "samples": []
+        }
+      ],
+      "types": [
+        {
+          "values": [
+            {
+              "name": {
+                "value": "Astérix et Obélix  Mission Cléopatre"
+              }
+            },
+            {
+              "name": {
+                "value": "Camping"
+              }
+            },
+            {
+              "name": {
+                "value": "Brice de Nice"
+              }
+            },
+            {
+              "name": {
+                "value": "La vérité si je mens"
+              }
+            },
+            {
+              "name": {
+                "value": "Bienvenue chez les chtis"
+              }
+            },
+            {
+              "name": {
+                "value": "La cage aux folles"
+              }
+            },
+            {
+              "name": {
+                "value": "Didier"
+              }
+            },
+            {
+              "name": {
+                "value": "Le diner de cons"
+              }
+            },
+            {
+              "name": {
+                "value": "Le père noël est une ordure"
+              }
+            },
+            {
+              "name": {
+                "value": "Les aventures de Rabbi Jacob"
+              }
+            },
+            {
+              "name": {
+                "value": "Le prénom"
+              }
+            },
+            {
+              "name": {
+                "value": "Les bronzés font du ski"
+              }
+            },
+            {
+              "name": {
+                "value": "Les visiteurs"
+              }
+            },
+            {
+              "name": {
+                "value": "La cité de la peur"
+              }
+            },
+            {
+              "name": {
+                "value": "Un air de famille"
+              }
+            },
+            {
+              "name": {
+                "value": "Very Bad Trip"
+              }
+            },
+            {
+              "name": {
+                "value": "Les 3 frères"
+              }
+            },
+            {
+              "name": {
+                "value": "Le pari"
+              }
+            },
+            {
+              "name": {
+                "value": "Forest Gump"
+              }
+            },
+            {
+              "name": {
+                "value": "La soupe aux choux"
+              }
+            },
+            {
+              "name": {
+                "value": "Le bon la brute et le truand"
+              }
+            },
+            {
+              "name": {
+                "value": "Léon"
+              }
+            },
+            {
+              "name": {
+                "value": "Intouchable"
+              }
+            },
+            {
+              "name": {
+                "value": "Les bronzés "
+              }
+            },
+            {
+              "name": {
+                "value": "la vie est un long fleuve tranquille"
+              }
+            },
+            {
+              "name": {
+                "value": "The mask"
+              }
+            },
+            {
+              "name": {
+                "value": "Fou dirène"
+              }
+            },
+            {
+              "name": {
+                "value": "La grande vadrouille"
+              }
+            },
+            {
+              "name": {
+                "value": "Les tuches"
+              }
+            },
+            {
+              "name": {
+                "value": "La chèvre"
+              }
+            },
+            {
+              "name": {
+                "value": "matrix"
+              }
+            },
+            {
+              "name": {
+                "value": "C'est arrivé près de chez vous"
+              }
+            },
+            {
+              "name": {
+                "value": "5ème Element"
+              }
+            },
+            {
+              "name": {
+                "value": "Trois cents"
+              }
+            },
+            {
+              "name": {
+                "value": "Star Wars"
+              }
+            },
+            {
+              "name": {
+                "value": "Titanic"
+              }
+            },
+            {
+              "name": {
+                "value": "Pulp fiction"
+              }
+            },
+            {
+              "name": {
+                "value": "OSS117"
+              }
+            },
+            {
+              "name": {
+                "value": "Le seigneur des anneaux"
+              }
+            },
+            {
+              "name": {
+                "value": "Un indien dans la ville"
+              }
+            },
+            {
+              "name": {
+                "value": "Le Parrain"
+              }
+            },
+            {
+              "name": {
+                "value": "Retour vers le futur"
+              }
+            },
+            {
+              "name": {
+                "value": "Truman Show"
+              }
+            },
+            {
+              "name": {
+                "value": "Rambo"
+              }
+            },
+            {
+              "name": {
+                "value": "Spiderman"
+              }
+            },
+            {
+              "name": {
+                "value": "Autant en emporte le vent"
+              }
+            },
+            {
+              "name": {
+                "value": "Rocky"
+              }
+            },
+            {
+              "name": {
+                "value": "Le corniaud"
+              }
+            },
+            {
+              "name": {
+                "value": "La folie des grandeurs"
+              }
+            },
+            {
+              "name": {
+                "value": "Il était une fois dans l'ouest"
+              }
+            },
+            {
+              "name": {
+                "value": "Jurassic park"
+              }
+            },
+            {
+              "name": {
+                "value": "Les Choristes"
+              }
+            },
+            {
+              "name": {
+                "value": "Amélie Poulain"
+              }
+            },
+            {
+              "name": {
+                "value": "Bruce tout Puissant"
+              }
+            },
+            {
+              "name": {
+                "value": "The Big Lebowsky"
+              }
+            },
+            {
+              "name": {
+                "value": "La Haine"
+              }
+            },
+            {
+              "name": {
+                "value": "Rasta Rocket"
+              }
+            },
+            {
+              "name": {
+                "value": "Karaté Kid"
+              }
+            },
+            {
+              "name": {
+                "value": "Dirty dancing"
+              }
+            },
+            {
+              "name": {
+                "value": "Rrrr"
+              }
+            },
+            {
+              "name": {
+                "value": "Dikkenek"
+              }
+            },
+            {
+              "name": {
+                "value": "Harry Potter"
+              }
+            },
+            {
+              "name": {
+                "value": "Terminator"
+              }
+            },
+            {
+              "name": {
+                "value": "Les tontons flingueurs"
+              }
+            },
+            {
+              "name": {
+                "value": "Le péril jeune"
+              }
+            },
+            {
+              "name": {
+                "value": "Men in black"
+              }
+            },
+            {
+              "name": {
+                "value": "Manon des sources"
+              }
+            },
+            {
+              "name": {
+                "value": "Qui veut le peau de Roger Rabbit"
+              }
+            },
+            {
+              "name": {
+                "value": "Scarface"
+              }
+            },
+            {
+              "name": {
+                "value": "Usual Suspect"
+              }
+            },
+            {
+              "name": {
+                "value": "l'Aile ou la cuisse"
+              }
+            },
+            {
+              "name": {
+                "value": "Cyrano de Bergerac"
+              }
+            },
+            {
+              "name": {
+                "value": "Le grand bleu"
+              }
+            },
+            {
+              "name": {
+                "value": "La gloire de mon père"
+              }
+            },
+            {
+              "name": {
+                "value": "E.T"
+              }
+            },
+            {
+              "name": {
+                "value": "Aladdin"
+              }
+            },
+            {
+              "name": {
+                "value": "Le roi Lion"
+              }
+            },
+            {
+              "name": {
+                "value": "Toy story"
+              }
+            },
+            {
+              "name": {
+                "value": "La reine des neiges"
+              }
+            },
+            {
+              "name": {
+                "value": "Némo"
+              }
+            },
+            {
+              "name": {
+                "value": "Shrek"
+              }
+            },
+            {
+              "name": {
+                "value": "Pocahontas"
+              }
+            },
+            {
+              "name": {
+                "value": "l'Age De Glace"
+              }
+            },
+            {
+              "name": {
+                "value": "Moi Moche et Mechant"
+              }
+            }
+          ],
+          "name": "film"
+        }
+      ]
+    }
+  }
+}
